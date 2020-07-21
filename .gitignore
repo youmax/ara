@@ -101,3 +101,5 @@ www/
 data/
 # Failed playbook integration test files
 *.retry
+
+settings.yaml

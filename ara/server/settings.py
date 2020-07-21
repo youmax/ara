@@ -21,7 +21,15 @@ import warnings
 
 import tzlocal
 from django.utils.crypto import get_random_string
-from dynaconf import LazySettings
+
+
+BASE_DIR = os.environ.get("ARA_BASE_DIR", os.getcwd()+"/settings")
+DEFAULT_SETTINGS = os.path.join(BASE_DIR, "settings.yaml")
+
+if os.path.exists(DEFAULT_SETTINGS):
+    os.environ['SETTINGS_MODULE_FOR_DYNACONF'] = DEFAULT_SETTINGS
+
+from dynaconf import LazySettings, settings
 
 # dynaconf prefers ruamel.yaml but works with pyyaml
 # https://github.com/rochacbruno/dynaconf/commit/d5cf87cbbdf54625ccf1138a4e4c210956791e61
@@ -30,11 +38,10 @@ try:
 except ImportError:
     import yaml
 
-BASE_DIR = os.environ.get("ARA_BASE_DIR", os.path.expanduser("~/.ara/server"))
-DEFAULT_SETTINGS = os.path.join(BASE_DIR, "settings.yaml")
-
-settings = LazySettings(
-    GLOBAL_ENV_FOR_DYNACONF="ARA", ENVVAR_FOR_DYNACONF="ARA_SETTINGS", SETTINGS_MODULE_FOR_DYNACONF=DEFAULT_SETTINGS
+lazysettings = LazySettings(
+    GLOBAL_ENV_FOR_DYNACONF="ARA", 
+    ENVVAR_FOR_DYNACONF="ARA_SETTINGS", 
+    SETTINGS_MODULE_FOR_DYNACONF=DEFAULT_SETTINGS
 )
 
 # reread BASE_DIR since it might have gotten changed in the config file.
